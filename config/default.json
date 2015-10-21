@@ -1,0 +1,14 @@
+{
+    "port": 8021,
+    "webapps": "",
+    "extname": [
+        ".vm",
+        ".html",
+        ".shtml"
+    ],
+    "responseHeaders": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+    }
+}

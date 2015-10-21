@@ -1,0 +1,32 @@
+{
+  "name": "velocityServer",
+  "version": "0.1.0",
+  "description": "velocity模板引擎",
+  "scripts": {
+    "test": "mocha test --no-timeouts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holyzfy/velocityServer.git"
+  },
+  "keywords": [
+    "velocity"
+  ],
+  "author": "holyzfy <zhaofuyun202@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/holyzfy/velocityServer/issues"
+  },
+  "homepage": "https://github.com/holyzfy/velocityServer",
+  "dependencies": {
+    "async": "^1.4.2",
+    "config": "^1.16.0",
+    "debug": "^2.2.0",
+    "expect.js": "^0.3.1",
+    "express": "^4.13.3",
+    "finalhandler": "^0.4.0",
+    "proxyquire": "^1.7.3",
+    "read-file": "^0.2.0",
+    "velocityjs": "^0.7.1"
+  }
+}
