@@ -26,7 +26,8 @@
     "express": "^4.13.3",
     "finalhandler": "^0.4.0",
     "proxyquire": "^1.7.3",
-    "read-file": "^0.2.0",
-    "velocityjs": "^0.7.1"
+    "serve-index": "^1.7.2",
+    "velocityjs": "^0.7.1",
+    "vinyl": "^1.0.0"
   }
 }
