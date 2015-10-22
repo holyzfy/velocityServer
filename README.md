@@ -3,6 +3,7 @@
 velocity模板服务器
 
 [![Build Status](https://travis-ci.org/holyzfy/velocityServer.svg)](https://travis-ci.org/holyzfy/velocityServer)
+![Progress](http://progressed.io/bar/91?title=done) 
 
 ## 安装
 
@@ -12,7 +13,8 @@ velocity模板服务器
 
     * `port`: 服务器的运行端口
     * `webapps`: 服务器根目录，请填写绝对路径
-    * `extname`: velocity文件的扩展名
+    * `ssiMaxDepth`: SSI指令内嵌的最大深度
+    * `vm`: velocity文件的扩展名
     * 'responseHeaders': 响应头
 
 ## 使用说明
