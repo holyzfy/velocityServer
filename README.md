@@ -3,7 +3,7 @@
 velocity模板服务器
 
 [![Build Status](https://travis-ci.org/holyzfy/velocityServer.svg)](https://travis-ci.org/holyzfy/velocityServer)
-![Progress](http://progressed.io/bar/91?title=done) 
+![Progress](http://progressed.io/bar/60?title=done) 
 
 ## 安装
 
