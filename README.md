@@ -15,7 +15,7 @@ velocity模板服务器
     * `webapps`: 服务器根目录，请填写绝对路径
     * `ssiMaxDepth`: SSI指令内嵌的最大深度
     * `vm`: velocity文件的扩展名
-    * 'responseHeaders': 响应头
+    * `responseHeaders`: 响应头
 
 ## 使用说明
 
