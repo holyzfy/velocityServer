@@ -6,26 +6,23 @@ var async = require('async');
 var debug = require('debug')('velocityServer:index.js');
 var Velocity = require('velocityjs');
 var File = require('vinyl');
+var path = require('path');
 
 function getExtname(filePath) {
     return (new File({path: filePath})).extname;
 }
 
-function render(path, options, fn) {
-    fs.readFile(path, 'utf8', function(err, content){
-        if(err) {
-            return fn(err);
-        }
-        
-        // TODO 渲染vm
-        
-        fn(null, content);
-    });
-}
-
 function parseVm(req, res, next) {
+    var isVm = config.vm.indexOf(getExtname(req.originalUrl)) >= 0;
+    debug(req.originalUrl, 'isVm=', isVm);
+    if(!isVm) {
+        return next();
+    }
+    
+    var filePath = path.join(config.webapps, req.originalUrl);
+    debug('filePath=', filePath);
+
     // TODO
-    next();
 }
 
 function errorHandler(err, req, res, next) {
@@ -43,10 +40,6 @@ function start(callback) {
     var app = express();
     
     app.set('views', config.webapps);
-    config.vm.forEach(function(item) {
-        app.engine(item, render);
-    });
-
     app.use(parseVm);
     app.use(serveIndex(config.webapps, {icons: true}));
     app.use(express.static(config.webapps, {index: false, maxAge: 0}));
@@ -57,7 +50,8 @@ function start(callback) {
 
 module.exports = {
     _debug: {
-        getExtname: getExtname
+        getExtname: getExtname,
+        parseVm: parseVm
     },
     start: start
 }

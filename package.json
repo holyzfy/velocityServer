@@ -27,6 +27,7 @@
     "finalhandler": "^0.4.0",
     "proxyquire": "^1.7.3",
     "serve-index": "^1.7.2",
+    "sinon": "^1.17.2",
     "velocityjs": "^0.7.1",
     "vinyl": "^1.0.0"
   }
