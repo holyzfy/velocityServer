@@ -14,36 +14,40 @@ function getExtname(filePath) {
 }
 
 function parseVm(req, res, next) {
-    var isVm = config.vm.indexOf(getExtname(req.originalUrl)) >= 0;
-    debug(req.originalUrl, 'isVm=', isVm);
+    var isVm = config.vm.indexOf(getExtname(req.path)) >= 0;
+    debug(req.path, 'isVm=', isVm);
     if(!isVm) {
         return next();
     }
     
-    compile(req.originalUrl, function(err, ret) {
+    var vmPath = path.join(config.webapps, req.path);    
+    compile(vmPath, function(err, ret) {
         if(err) {
             return next(err);
         }
-        res.set('Content-Type', 'text/html');
+        res.set('Content-Type', 'text/html; charset=utf-8');
         res.send(ret);
     });
 }
 
-function compile(reqPath, callback) {
-    var html = '';
-    var vmPath = path.join(config.webapps, reqPath);
+function compile(vmPath, callback) {
     var contextFile = new File({path: vmPath});
     contextFile.extname = '.json';
 
     async.map([vmPath, contextFile.path], getFileContent, function(err, results) {
-        // TODO velocity compile
+        var template = results[0];
+        if(template === null) {
+            return callback('文件未找到');
+        }
+        var context = JSON.parse(results[1]);
+        var html = Velocity.render(template, context);
+        callback(null, html);
     });
-    
 }
 
 function getFileContent(filePath, callback) {
     fs.readFile(filePath, 'utf8', function(err, content){
-        callback(content);
+        callback(null, content || null);
     });
 }
 
