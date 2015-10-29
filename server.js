@@ -7,6 +7,7 @@ var debug = require('debug')('velocityServer:index.js');
 var Velocity = require('velocityjs');
 var File = require('vinyl');
 var path = require('path');
+var fs = require('fs');
 
 function getExtname(filePath) {
     return (new File({path: filePath})).extname;
@@ -19,10 +20,31 @@ function parseVm(req, res, next) {
         return next();
     }
     
-    var filePath = path.join(config.webapps, req.originalUrl);
-    debug('filePath=', filePath);
+    compile(req.originalUrl, function(err, ret) {
+        if(err) {
+            return next(err);
+        }
+        res.set('Content-Type', 'text/html');
+        res.send(ret);
+    });
+}
 
-    // TODO
+function compile(reqPath, callback) {
+    var html = '';
+    var vmPath = path.join(config.webapps, reqPath);
+    var contextFile = new File({path: vmPath});
+    contextFile.extname = '.json';
+
+    async.map([vmPath, contextFile.path], getFileContent, function(err, results) {
+        // TODO velocity compile
+    });
+    
+}
+
+function getFileContent(filePath, callback) {
+    fs.readFile(filePath, 'utf8', function(err, content){
+        callback(content);
+    });
 }
 
 function errorHandler(err, req, res, next) {
@@ -51,7 +73,9 @@ function start(callback) {
 module.exports = {
     _debug: {
         getExtname: getExtname,
-        parseVm: parseVm
+        parseVm: parseVm,
+        compile: compile,
+        getFileContent: getFileContent
     },
     start: start
 }

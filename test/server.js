@@ -28,5 +28,19 @@ describe(__filename, function(){
         expect(next.called).to.not.be.ok();
     });
 
+    /*it('compile', function(done) {
+        server._debug.compile('/demo/index.vm', function(err, ret) {
+            // expect(ret.extname).to.be('.json');
+            // done();
+        });
+    });*/
+
+it('getFileContent', function(done) {
+    server._debug.getFileContent('/file/not/existed', function(err, content) {
+        expect(content).not.be.ok();
+        done();
+    });
+});
+
 
 });
