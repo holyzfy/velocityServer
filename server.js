@@ -30,25 +30,26 @@ function parseVm(req, res, next) {
     });
 }
 
-function compile(vmPath, callback) {
+function compile(vmPath, macros, callback) {
+    callback = arguments[arguments.length - 1];
     var contextFile = new File({path: vmPath});
-    contextFile.extname = '.json';
+    contextFile.extname = '.js';
 
-    async.map([vmPath, contextFile.path], getFileContent, function(err, results) {
-        var template = results[0];
-        if(template === null) {
-            return callback('文件未找到');
-        }
-        var context = JSON.parse(results[1]);
-        var html = Velocity.render(template, context);
-        callback(null, html);
-    });
+    var template = getFileContent(vmPath);
+    if(template === null) {
+        return callback('文件未找到');
+    }
+    var context = require(contextFile.path);
+    var html = Velocity.render(template, context, macros);
+    callback(null, html);
 }
 
-function getFileContent(filePath, callback) {
-    fs.readFile(filePath, 'utf8', function(err, content){
-        callback(null, content || null);
-    });
+function getFileContent(filePath) {
+    var content = null;
+    try {
+        content = fs.readFileSync(filePath, 'utf8');
+    } catch(e) {}
+    return content;
 }
 
 function errorHandler(err, req, res, next) {

@@ -3,7 +3,7 @@
 velocity模板服务器
 
 [![Build Status](https://travis-ci.org/holyzfy/velocityServer.svg)](https://travis-ci.org/holyzfy/velocityServer)
-![Progress](http://progressed.io/bar/60?title=done) 
+![Progress](http://progressed.io/bar/70?title=done) 
 
 ## 安装
 
@@ -19,7 +19,7 @@ velocity模板服务器
 
 ## 使用说明
 
-如果velocity文件同目录下有同名的json文件，则作为相应的模拟数据，例如：
+如果模板文件同目录下有同名的js文件，则作为模板的模拟数据，例如：
 
 index.vm
 
@@ -30,19 +30,22 @@ index.vm
     <li>$item</li>
     #end
 </ul>
-{{$title}}
+<p>Today is $now()</p>
 ```
 
-index.json
+index.js
 
-```json
-{
+```js
+module.exports = {
     "title": "hello title",
     "list": [
         "one",
         "two",
         "three"
-    ]
+    ],
+    "now": function() {
+        return (new Date).getDay();
+    }
 }
 ```
 
