@@ -3,6 +3,5 @@ node_js:
   - "0.12"
 before_install:
   - "npm install -g mocha"
-  - "npm install -g nyc"
 
-after_success: npm run coverage
+after_success: npm run coveralls
