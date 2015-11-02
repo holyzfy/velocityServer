@@ -7,6 +7,7 @@ var server = proxyquire('../server.js', {
         webapps: __dirname
     }
 });
+var File = require('vinyl');
 
 describe(__filename, function(){
     it('getExtname', function() {
@@ -61,4 +62,18 @@ describe(__filename, function(){
         expect(next.called).to.not.be.ok();
     });
     
+    it('replaceSSI', function() {
+        var maxDepth = 10;
+        var vmPath = path.resolve(__dirname, 'testcase/list.vm');
+        var vmFile = new File({
+            path: vmPath,
+            contents: new Buffer(server._debug.getFileContent(vmPath))
+        });
+        var reg = /\#parse\(\s*"([^"]*)"\s*\)/m;
+        var ret = server._debug.replaceSSI(vmFile, reg, maxDepth);
+        var expectedPath = path.resolve(__dirname, 'testcase/list_expect.html');
+        var expected = server._debug.getFileContent(expectedPath);
+        expect(ret).to.be(expected);
+    });
+
 });

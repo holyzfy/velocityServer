@@ -1,0 +1,3 @@
+#parse("inc/header.vm")
+<p>content</p>
+#parse( "inc/footer.vm" )

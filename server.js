@@ -37,7 +37,7 @@ function compile(vmPath, macros, callback) {
 
     var template = getFileContent(vmPath);
     if(template === null) {
-        return callback('文件未找到');
+        return callback('File not found:', vmPath);
     }
     var context = require(contextFile.path);
     var html = Velocity.render(template, context, macros);
@@ -50,6 +50,21 @@ function getFileContent(filePath) {
         content = fs.readFileSync(filePath, 'utf8');
     } catch(e) {}
     return content;
+}
+
+function replaceSSI(file, reg, maxDepth) {
+    if(maxDepth <= 0) {
+        return file.contents.toString();
+    }
+    var contents = file.contents.toString().replace(reg, function(match, subPath) {
+        file.path = path.resolve(path.dirname(file.path), subPath);
+        debug(subPath, file.path);
+        return getFileContent(file.path) || match;
+    });
+    debug(maxDepth, 'contents=', contents);
+
+    file.contents = new Buffer(contents);
+    return replaceSSI(file, reg, --maxDepth);
 }
 
 function errorHandler(err, req, res, next) {
@@ -80,7 +95,8 @@ module.exports = {
         getExtname: getExtname,
         parseVm: parseVm,
         compile: compile,
-        getFileContent: getFileContent
+        getFileContent: getFileContent,
+        replaceSSI: replaceSSI
     },
     start: start
 }
