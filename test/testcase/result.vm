@@ -1,0 +1,2 @@
+<div><!--#include virtual="inc/header.vm" --></div>
+<div><!--#include    file="inc/copyright.vm" --></div>

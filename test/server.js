@@ -61,19 +61,52 @@ describe(__filename, function(){
         server._debug.parseVm(req, res, next);
         expect(next.called).to.not.be.ok();
     });
-    
-    it('replaceSSI', function() {
-        var maxDepth = 10;
-        var vmPath = path.resolve(__dirname, 'testcase/list.vm');
+
+    var testRepaceSSI = function(vm, options, expectedPath) {
+        var vmPath = path.resolve(__dirname, vm);
         var vmFile = new File({
             path: vmPath,
             contents: new Buffer(server._debug.getFileContent(vmPath))
         });
-        var reg = /\#parse\(\s*"([^"]*)"\s*\)/m;
-        var ret = server._debug.replaceSSI(vmFile, reg, maxDepth);
-        var expectedPath = path.resolve(__dirname, 'testcase/list_expect.html');
+        var ret = server._debug.replaceSSI(vmFile, options.reg, options.maxDepth);
         var expected = server._debug.getFileContent(expectedPath);
         expect(ret).to.be(expected);
+    }
+    
+    it('replaceSSI: #parse maxDepth = 10', function() {
+        var options = {
+            maxDepth: 10,
+            reg: server._debug.replaceSSI.reg.macroParse
+        };
+        var expectedPath = path.resolve(__dirname, 'testcase/list_expect.html');
+        testRepaceSSI('testcase/list.vm', options, expectedPath);
+    });
+
+    it('replaceSSI: #parse maxDepth = 1', function() {
+        var options = {
+            maxDepth: 1,
+            reg: server._debug.replaceSSI.reg.macroParse
+        };
+        var expectedPath = path.resolve(__dirname, 'testcase/list_expect2.html');
+        testRepaceSSI('testcase/list.vm', options, expectedPath);
+    });
+
+    it('replaceSSI: #include', function() {
+        var options = {
+            maxDepth: 10,
+            reg: server._debug.replaceSSI.reg.macroInclude
+        };
+        var expectedPath = path.resolve(__dirname, 'testcase/detail_expect.html');
+        testRepaceSSI('testcase/detail.vm', options, expectedPath);
+    });
+
+    it('replaceSSI: ssi include', function() {
+        var options = {
+            maxDepth: 10,
+            reg: server._debug.replaceSSI.reg.ssiInclude
+        };
+        var expectedPath = path.resolve(__dirname, 'testcase/result_expect.html');
+        testRepaceSSI('testcase/result.vm', options, expectedPath);
     });
 
 });
