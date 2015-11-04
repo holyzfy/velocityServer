@@ -94,7 +94,7 @@ function replaceSSI(vmFile, reg, maxDepth) {
 replaceSSI.reg = {
     macroParse: /\#parse\(\s*"([^"]*)"\s*\)/gm,
     macroInclude: /\#include\(\s*"([^"]*)"\s*\)/gm,
-    ssiInclude: /<\!--#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm
+    ssiInclude: /<\!--\\?#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm
 };
 
 function errorHandler(err, req, res, next) {
