@@ -104,6 +104,21 @@ function errorHandler(err, req, res, next) {
     finalhandler(req, res, options)();
 };
 
+function json(req, res, next) {
+    var filePath = path.join(config.webapps, req.path);
+    var content = getFileContent(filePath);
+
+    if(content === null) {
+        next();
+    } else {
+        res.set({
+            'Content-Type': 'application/json',
+            'maxAge': 0
+        });
+        res.send(content);
+    }
+};
+
 function start(callback) {
     if(!config.webapps) {
         return console.error('请配置服务器根目录 config.webapps');
@@ -113,6 +128,7 @@ function start(callback) {
     
     app.set('views', config.webapps);
     app.use(parseVm);
+    app.post('*.json', json);
     app.use(serveIndex(config.webapps, {icons: true}));
     app.use(express.static(config.webapps, {index: false, maxAge: 0}));
     app.use(errorHandler);
@@ -126,7 +142,8 @@ module.exports = {
         parseVm: parseVm,
         compile: compile,
         getFileContent: getFileContent,
-        replaceSSI: replaceSSI
+        replaceSSI: replaceSSI,
+        json: json
     },
     start: start
 }

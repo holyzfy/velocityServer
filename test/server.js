@@ -109,4 +109,43 @@ describe(__filename, function(){
         testRepaceSSI('testcase/result.vm', options, expectedPath);
     });
 
+    it('json: file is existed', function() {
+        var req = {
+            path: 'testcase/result.json'
+        };
+        var res = {
+            set: sinon.spy(),
+            send: sinon.spy()
+        };
+        var next = sinon.spy();
+        server._debug.json(req, res, next);
+        expect(res.send.called).to.be.ok();
+    });
+
+    it('json: file is empty', function() {
+        var req = {
+            path: 'testcase/empty.json'
+        };
+        var res = {
+            set: sinon.spy(),
+            send: sinon.spy()
+        };
+        var next = sinon.spy();
+        server._debug.json(req, res, next);
+        expect(res.send.called).to.be.ok();
+    });
+
+    it('json: file is not existed', function() {
+        var req = {
+            path: '/file/not/existed'
+        };
+        var res = {
+            set: sinon.spy(),
+            send: sinon.spy()
+        };
+        var next = sinon.spy();
+        server._debug.json(req, res, next);
+        expect(next.called).to.be.ok();
+    });
+
 });
