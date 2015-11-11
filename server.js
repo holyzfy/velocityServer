@@ -120,7 +120,7 @@ function json(req, res, next) {
 
 function start(callback) {
     if(!config.webapps) {
-        return console.error('请配置服务器根目录 config.webapps');
+        return callback(new Error('Error: config.webapps is missing, Please set it at config/local.json.'));
     }
 
     var app = express();
