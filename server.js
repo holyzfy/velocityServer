@@ -37,7 +37,7 @@ function compile(vmPath, macros, callback) {
     contextFile.extname = '.js';
 
     var template = getFileContent(vmPath);
-    if(template === null) {
+    if(null === template) {
         return callback('File not found:', vmPath);
     }
 
@@ -78,16 +78,15 @@ function replaceSSI(vmFile, reg, maxDepth) {
     }
     return file.contents.toString().replace(reg, function(match, subPath) {
         var newFilePath = path.resolve(path.dirname(file.path), subPath);
-        var contents = getFileContent(newFilePath);
-        if(contents) {
-            var newFile = new File({
-                path: newFilePath,
-                contents: new Buffer(contents)
-            });
-            return replaceSSI(newFile, reg, --maxDepth);
-        } else {
+        var content = getFileContent(newFilePath);
+        if(null === content) {
             return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', subPath);
         }
+        var newFile = new File({
+            path: newFilePath,
+            contents: new Buffer(content)
+        });
+        return replaceSSI(newFile, reg, --maxDepth);
     });
 }
 
@@ -108,7 +107,7 @@ function json(req, res, next) {
     var filePath = path.join(config.webapps, req.path);
     var content = getFileContent(filePath);
 
-    if(content === null) {
+    if(null === content) {
         next();
     } else {
         res.set({
