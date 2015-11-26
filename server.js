@@ -126,6 +126,10 @@ function start(callback) {
     var app = express();
     
     app.set('views', config.webapps);
+    app.use(function(req, res, next) {
+        res.set(config.responseHeaders);
+        next();
+    });
     app.use(parseVm);
     app.post('*.json', json);
     app.use(serveIndex(config.webapps, {icons: true}));
