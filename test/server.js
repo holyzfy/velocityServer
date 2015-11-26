@@ -5,7 +5,17 @@ var path = require('path');
 var server = proxyquire('../server.js', {
     config: {
         webapps: __dirname
-    }
+    },
+    express: function() {
+        return {
+            set: sinon.spy(),
+            use: sinon.spy(),
+            post: sinon.spy(),
+            listen: sinon.stub().callsArg(1),
+            static: sinon.spy()
+        }
+    },
+    finalhandler: sinon.stub().returns(sinon.spy())
 });
 var File = require('vinyl');
 
@@ -109,6 +119,10 @@ describe(__filename, function(){
         testRepaceSSI('testcase/result.vm', options, expectedPath);
     });
 
+    it('errorHandler', function() {
+        expect(server._debug.errorHandler).to.not.throwException();
+    });
+
     it('json: file is existed', function() {
         var req = {
             path: 'testcase/result.json'
@@ -146,6 +160,12 @@ describe(__filename, function(){
         var next = sinon.spy();
         server._debug.json(req, res, next);
         expect(next.called).to.be.ok();
+    });
+
+    it('start', function() {
+        var callback = sinon.spy();
+        server.start(callback);
+        expect(callback.called).to.be(true);
     });
 
 });

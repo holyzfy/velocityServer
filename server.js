@@ -146,6 +146,7 @@ module.exports = {
         compile: compile,
         getFileContent: getFileContent,
         replaceSSI: replaceSSI,
+        errorHandler: errorHandler,
         json: json
     },
     start: start
