@@ -20,10 +20,10 @@ function parseVm(req, res, next) {
         return next();
     }
     
-    var vmPath = path.join(config.webapps, req.path);    
+    var vmPath = path.join(config.webapps, req.path);
     compile(vmPath, function(err, ret) {
         if(err) {
-            return next(err);
+            return next();
         }
         res.set('Content-Type', 'text/html; charset=utf-8');
         res.send(ret);
@@ -46,7 +46,9 @@ function compile(vmPath, macros, callback) {
     try {
         delete require.cache[require.resolve(contextFile.path)];
         context = require(contextFile.path);
-    } catch(e) {}
+    } catch(err) {
+        return callback(err);
+    }
     templateFile.contents = new Buffer(template);
 
     for(var key in replaceSSI.reg) {
