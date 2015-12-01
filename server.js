@@ -23,7 +23,7 @@ function parseVm(req, res, next) {
     var vmPath = path.join(config.webapps, req.path);
     compile(vmPath, function(err, ret) {
         if(err) {
-            return next();
+            return next(err);
         }
         res.set('Content-Type', 'text/html; charset=utf-8');
         res.send(ret);
@@ -46,19 +46,20 @@ function compile(vmPath, macros, callback) {
     try {
         delete require.cache[require.resolve(contextFile.path)];
         context = require(contextFile.path);
+    } catch(err) {}
+
+    templateFile.contents = new Buffer(template);
+    try {
+        for(var key in replaceSSI.reg) {
+            template = replaceSSI(templateFile, replaceSSI.reg[key], config.ssiMaxDepth);
+            var isMacro = ['macroParse', 'macroInclude'].indexOf(key) >= 0;
+            html = isMacro ? Velocity.render(template, context, macros) : template;
+            templateFile.contents = new Buffer(html);
+        }
+        callback(null, html);
     } catch(err) {
         return callback(err);
     }
-    templateFile.contents = new Buffer(template);
-
-    for(var key in replaceSSI.reg) {
-        template = replaceSSI(templateFile, replaceSSI.reg[key], config.ssiMaxDepth);
-        var isMacro = ['macroParse', 'macroInclude'].indexOf(key) >= 0;
-        html = isMacro ? Velocity.render(template, context, macros) : template;
-        templateFile.contents = new Buffer(html);
-    }
-
-    callback(null, html);
 }
 
 function getFileContent(filePath) {
@@ -102,7 +103,7 @@ function errorHandler(err, req, res, next) {
     var options = {
         message: true
     };
-    finalhandler(req, res, options)();
+    finalhandler(req, res, options)(err);
 };
 
 function json(req, res, next) {
