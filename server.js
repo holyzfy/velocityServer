@@ -123,7 +123,7 @@ function json(req, res, next) {
 
 function start(callback) {
     if(!config.webapps) {
-        return callback(new Error('Error: config.webapps is missing, Please set it at config/local.json.'));
+        return callback(new Error('Error: config.webapps is missing, Please set it in config/local.json file.'));
     }
 
     var app = express();
