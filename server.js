@@ -70,6 +70,17 @@ function getFileContent(filePath) {
     return content;
 }
 
+function isInInc(filePath) {
+    if(filePath.indexOf('inc' + path.sep) === 0) {
+        filePath = ('./' + path.sep) + filePath;
+    }
+    var file = new File({
+        path: filePath
+    });
+    var pattern = new RegExp(path.sep + 'inc' + path.sep);
+    return pattern.test(file.path);
+}
+
 function replaceSSI(vmFile, reg, maxDepth) {
     var file = new File({
         path: vmFile.path,
@@ -81,6 +92,18 @@ function replaceSSI(vmFile, reg, maxDepth) {
     }
     return file.contents.toString().replace(reg, function(match, subPath) {
         var newFilePath = path.resolve(path.dirname(file.path), subPath);
+
+        if(isInInc(file.path) && isInInc(subPath)) {
+            var inc = path.sep + 'inc' + path.sep;
+            var root = file.path.slice(0, file.path.indexOf(inc));
+            var _subPath = subPath;
+            if(_subPath.indexOf('inc' + path.sep) === 0) {
+                _subPath = ('.' + path.sep) + _subPath;
+            }
+            var part = _subPath.slice(_subPath.indexOf(inc));
+            newFilePath = path.join(root, part);
+        }
+
         var content = getFileContent(newFilePath);
         if(null === content) {
             return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', subPath);
@@ -150,6 +173,7 @@ module.exports = {
         getFileContent: getFileContent,
         replaceSSI: replaceSSI,
         errorHandler: errorHandler,
+        isInInc: isInInc,
         json: json
     },
     start: start

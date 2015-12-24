@@ -94,10 +94,18 @@ describe(__filename, function(){
 
     it('replaceSSI: #parse maxDepth = 1', function() {
         var options = {
-            maxDepth: 1,
             reg: server._debug.replaceSSI.reg.macroParse
         };
-        var expectedPath = path.resolve(__dirname, 'testcase/list_expect2.html');
+        var expectedPath = path.resolve(__dirname, 'testcase/inc/style.html');
+        testRepaceSSI('testcase/inc/head_static.html', options, expectedPath);
+    });
+
+    it('replaceSSI: #parse inc', function() {
+        var options = {
+            maxDepth: 10,
+            reg: server._debug.replaceSSI.reg.macroParse
+        };
+        var expectedPath = path.resolve(__dirname, 'testcase/list_expect.html');
         testRepaceSSI('testcase/list.vm', options, expectedPath);
     });
 
@@ -166,6 +174,20 @@ describe(__filename, function(){
         var callback = sinon.spy();
         server.start(callback);
         expect(callback.called).to.be(true);
+    });
+
+    it('isInInc', function() {
+        var path1 = '/file/not/ininc/a.html';
+        expect(server._debug.isInInc(path1)).to.be(false);
+        
+        var path2 = '/file/inc/a.html';
+        expect(server._debug.isInInc(path2)).to.be(true);
+
+        var path3 = 'inc/a.html';
+        expect(server._debug.isInInc(path3)).to.be(true);
+
+        var path4 = './inc/a.html';
+        expect(server._debug.isInInc(path4)).to.be(true);
     });
 
 });
