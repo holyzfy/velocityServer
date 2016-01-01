@@ -30,37 +30,66 @@ function parseVm(req, res, next) {
     });
 }
 
-function compile(vmPath, macros, callback) {
-    callback = arguments[arguments.length - 1];
-    var templateFile = new File({path: vmPath});
+function compile(vmPath, callback) {
+    var vmFile = new File({path: vmPath});
     var contextFile = new File({path: vmPath});
     contextFile.extname = '.js';
 
     var template = getFileContent(vmPath);
     if(null === template) {
-        return callback('File not found:', vmPath);
+        return callback('File not found:' + vmPath);
     }
+    vmFile.contents = new Buffer(template);
 
-    var html = '';
     var context;
     try {
         delete require.cache[require.resolve(contextFile.path)];
         context = require(contextFile.path);
     } catch(err) {}
 
-    templateFile.contents = new Buffer(template);
     try {
-        for(var key in replaceSSI.reg) {
-            template = replaceSSI(templateFile, replaceSSI.reg[key], config.ssiMaxDepth);
-            var isMacro = ['macroParse', 'macroInclude'].indexOf(key) >= 0;
-            html = isMacro ? Velocity.render(template, context, macros) : template;
-            templateFile.contents = new Buffer(html);
-        }
+        var html = Velocity.render(template, context, getMacros(vmFile.path, context));
+        html = ssiInclude(html, vmFile.path);
         callback(null, html);
     } catch(err) {
         return callback(err);
     }
 }
+
+function getMacros(relativePath, context, maxDepth) {
+    maxDepth = isNaN(maxDepth) ? config.ssiMaxDepth : maxDepth;
+
+    var ssi = function(filePath) {
+        var newFilePath = path.resolve(path.dirname(relativePath), filePath);
+        var content = getFileContent(newFilePath);
+
+        if(null === content) {
+            return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', filePath);
+        }
+
+        var hasSSI = content.match(reg.macroParse) || content.match(reg.macroInclude);
+        var macros = (hasSSI && --maxDepth > 0) ? getMacros(relativePath, context, maxDepth) : null;
+        return Velocity.render(content, context, macros);
+    };
+
+    return {
+        include: ssi,
+        parse: ssi
+    };
+}
+
+function ssiInclude(content, relativePath) {
+    return content.replace(reg.ssiInclude, function(match, filePath) {
+        var newFilePath = path.resolve(path.dirname(relativePath), filePath);
+        return getFileContent(newFilePath);
+    });
+}
+
+var reg = {
+    macroParse: /\#parse\(\s*"([^"]*)"\s*\)/gm,
+    macroInclude: /\#include\(\s*"([^"]*)"\s*\)/gm,
+    ssiInclude: /<\!--\\?#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm
+};
 
 function getFileContent(filePath) {
     var content = null;
@@ -69,58 +98,6 @@ function getFileContent(filePath) {
     } catch(e) {}
     return content;
 }
-
-function isInInc(filePath) {
-    if(filePath.indexOf('inc' + path.sep) === 0) {
-        filePath = ('./' + path.sep) + filePath;
-    }
-    var file = new File({
-        path: filePath
-    });
-    var pattern = new RegExp(path.sep + 'inc' + path.sep);
-    return pattern.test(file.path);
-}
-
-function replaceSSI(vmFile, reg, maxDepth) {
-    var file = new File({
-        path: vmFile.path,
-        contents: new Buffer(vmFile.contents.toString())
-    });
-    var hasSSI = reg.test(file.contents.toString());
-    if(maxDepth <= 0 || !hasSSI) {
-        return file.contents.toString();
-    }
-    return file.contents.toString().replace(reg, function(match, subPath) {
-        var newFilePath = path.resolve(path.dirname(file.path), subPath);
-
-        if(isInInc(file.path) && isInInc(subPath)) {
-            var inc = path.sep + 'inc' + path.sep;
-            var root = file.path.slice(0, file.path.indexOf(inc));
-            var _subPath = subPath;
-            if(_subPath.indexOf('inc' + path.sep) === 0) {
-                _subPath = ('.' + path.sep) + _subPath;
-            }
-            var part = _subPath.slice(_subPath.indexOf(inc));
-            newFilePath = path.join(root, part);
-        }
-
-        var content = getFileContent(newFilePath);
-        if(null === content) {
-            return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', subPath);
-        }
-        var newFile = new File({
-            path: newFilePath,
-            contents: new Buffer(content)
-        });
-        return replaceSSI(newFile, reg, --maxDepth);
-    });
-}
-
-replaceSSI.reg = {
-    macroParse: /\#parse\(\s*"([^"]*)"\s*\)/gm,
-    macroInclude: /\#include\(\s*"([^"]*)"\s*\)/gm,
-    ssiInclude: /<\!--\\?#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm
-};
 
 function errorHandler(err, req, res, next) {
     var options = {
@@ -170,10 +147,11 @@ module.exports = {
         getExtname: getExtname,
         parseVm: parseVm,
         compile: compile,
+        getMacros: getMacros,
+        reg: reg,
+        ssiInclude: ssiInclude,
         getFileContent: getFileContent,
-        replaceSSI: replaceSSI,
         errorHandler: errorHandler,
-        isInInc: isInInc,
         json: json
     },
     start: start

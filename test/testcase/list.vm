@@ -1,3 +1,11 @@
-#parse("inc/header.vm")
+<head>#include("inc/style.html")</head>
+
+<div>#parse("inc/header.vm")</div>
+
+<div>#parse("mod/not/existed.vm")</div>
+
 <p>content</p>
-#parse( "inc/footer.vm" )
+
+<p>#parse("inc/aside.vm")</p>
+
+<div>#parse( "inc/footer.vm" )</div>

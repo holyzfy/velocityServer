@@ -1,10 +1,15 @@
 <div><!--#include virtual="inc/header.vm" --></div>
+
 <h1>${title}</h1>
-#parse("inc/article.vm")
+
+<div>#parse("inc/article.vm")</div>
+
 <ul>
 #foreach($item in $list)
     <li>$item</li>
 #end
 </ul>
+
 <p>Today is $now()</p>
-#parse("inc/footer.vm" )
+
+<div>#parse("inc/footer.vm" )</div>

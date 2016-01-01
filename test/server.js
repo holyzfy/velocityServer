@@ -2,6 +2,7 @@ var expect = require('expect.js');
 var proxyquire = require('proxyquire');
 var sinon = require('sinon');
 var path = require('path');
+var Velocity = require('velocityjs');
 var server = proxyquire('../server.js', {
     config: {
         webapps: __dirname
@@ -36,12 +37,86 @@ describe(__filename, function(){
         expect(content).to.be('<h1>${title}</h1>');
     });
 
+    it('reg:#parse', function() {
+        var vm = '<div>#parse("inc/copyright.vm")</div>';
+        expect(vm.match(server._debug.reg.macroParse).length).to.be(1);
+        expect(vm.match(server._debug.reg.macroParse).length).to.be(1);
+    });
+
+    it('reg:#include', function() {
+        var vm = '<div>#include( "inc/copyright.vm" )</div>';
+        expect(vm.match(server._debug.reg.macroInclude).length).to.be(1);
+    });
+
+    it('reg:<!#include', function() {
+        var vm = '<!--#include virtual="inc/header.vm" --><!--#include file="inc/header.vm"-->';
+        expect(vm.match(server._debug.reg.ssiInclude).length).to.be(2);
+    });
+
+    it('getMacros', function() {
+        var vmPath = path.join(__dirname, 'testcase/list.vm');
+        var vm = server._debug.getFileContent(vmPath);
+        var context = null;
+        var macros = server._debug.getMacros(vmPath, context);
+        var ret = Velocity.render(vm, context, macros);
+        
+        var contentPath = path.join(__dirname, 'testcase/list_expect.html');
+        var content = server._debug.getFileContent(contentPath);
+
+        expect(ret).to.be(content);
+    });
+
+    /*it('getMacros: maxDepth = 1', function() {
+        var vmPath = path.join(__dirname, 'testcase/list.vm');
+        var vm = server._debug.getFileContent(vmPath);
+        var context = null;
+        var macros = server._debug.getMacros(vmPath, context, 1);
+        var ret = Velocity.render(vm, context, macros);
+        
+        var contentPath = path.join(__dirname, 'testcase/list_expect2.html');
+        var content = server._debug.getFileContent(contentPath);
+
+        expect(ret).to.be(content);
+    });*/
+
+    it('getMacros: unparsed', function() {
+        var vmPath = path.join(__dirname, 'testcase/unparsed.vm');
+        var vm = server._debug.getFileContent(vmPath);
+        var context = null;
+        var macros = server._debug.getMacros(vmPath, context);
+        var ret = Velocity.render(vm, context, macros);
+        
+        var contentPath = path.join(__dirname, 'testcase/unparsed.html');
+        var content = server._debug.getFileContent(contentPath);
+
+        expect(ret).to.be(content);
+    });
+
+    it('ssiInclude', function() {
+        var vmPath = path.join(__dirname, 'testcase/result.vm');
+        var vm = server._debug.getFileContent(vmPath);
+        var ret = server._debug.ssiInclude(vm, vmPath);
+
+        var contentPath = path.join(__dirname, 'testcase/result_expect.html');
+        var content = server._debug.getFileContent(contentPath);
+
+        expect(ret).to.be(content);
+    });
+
     it('compile', function(done) {
         var vmPath = path.join(__dirname, 'testcase/index.vm');
         var contentPath = path.join(__dirname, 'testcase/index_expect.html');
         var content = server._debug.getFileContent(contentPath);
         server._debug.compile(vmPath, function(err, ret) {
             expect(ret).to.be(content);
+            done();
+        });
+    });
+
+    it('compile: file not found', function(done) {
+        var vmPath = '/path/to/not/existed';
+        server._debug.compile(vmPath, function(err) {
+            expect(err).to.be('File not found:' + vmPath);
             done();
         });
     });
@@ -70,61 +145,6 @@ describe(__filename, function(){
         var next = sinon.spy();
         server._debug.parseVm(req, res, next);
         expect(next.called).to.not.be.ok();
-    });
-
-    var testRepaceSSI = function(vm, options, expectedPath) {
-        var vmPath = path.resolve(__dirname, vm);
-        var vmFile = new File({
-            path: vmPath,
-            contents: new Buffer(server._debug.getFileContent(vmPath))
-        });
-        var ret = server._debug.replaceSSI(vmFile, options.reg, options.maxDepth);
-        var expected = server._debug.getFileContent(expectedPath);
-        expect(ret).to.be(expected);
-    }
-    
-    it('replaceSSI: #parse maxDepth = 10', function() {
-        var options = {
-            maxDepth: 10,
-            reg: server._debug.replaceSSI.reg.macroParse
-        };
-        var expectedPath = path.resolve(__dirname, 'testcase/list_expect.html');
-        testRepaceSSI('testcase/list.vm', options, expectedPath);
-    });
-
-    it('replaceSSI: #parse maxDepth = 1', function() {
-        var options = {
-            reg: server._debug.replaceSSI.reg.macroParse
-        };
-        var expectedPath = path.resolve(__dirname, 'testcase/inc/style.html');
-        testRepaceSSI('testcase/inc/head_static.html', options, expectedPath);
-    });
-
-    it('replaceSSI: #parse inc', function() {
-        var options = {
-            maxDepth: 10,
-            reg: server._debug.replaceSSI.reg.macroParse
-        };
-        var expectedPath = path.resolve(__dirname, 'testcase/list_expect.html');
-        testRepaceSSI('testcase/list.vm', options, expectedPath);
-    });
-
-    it('replaceSSI: #include', function() {
-        var options = {
-            maxDepth: 10,
-            reg: server._debug.replaceSSI.reg.macroInclude
-        };
-        var expectedPath = path.resolve(__dirname, 'testcase/detail_expect.html');
-        testRepaceSSI('testcase/detail.vm', options, expectedPath);
-    });
-
-    it('replaceSSI: ssi include', function() {
-        var options = {
-            maxDepth: 10,
-            reg: server._debug.replaceSSI.reg.ssiInclude
-        };
-        var expectedPath = path.resolve(__dirname, 'testcase/result_expect.html');
-        testRepaceSSI('testcase/result.vm', options, expectedPath);
     });
 
     it('errorHandler', function() {
@@ -174,20 +194,6 @@ describe(__filename, function(){
         var callback = sinon.spy();
         server.start(callback);
         expect(callback.called).to.be(true);
-    });
-
-    it('isInInc', function() {
-        var path1 = '/file/not/ininc/a.html';
-        expect(server._debug.isInInc(path1)).to.be(false);
-        
-        var path2 = '/file/inc/a.html';
-        expect(server._debug.isInInc(path2)).to.be(true);
-
-        var path3 = 'inc/a.html';
-        expect(server._debug.isInInc(path3)).to.be(true);
-
-        var path4 = './inc/a.html';
-        expect(server._debug.isInInc(path4)).to.be(true);
     });
 
 });

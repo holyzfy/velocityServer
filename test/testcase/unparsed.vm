@@ -1,0 +1,3 @@
+<div>#[[don't parse me!]]#</div>
+
+<div>#parse("inc/footer.vm")</div>

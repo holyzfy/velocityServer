@@ -1,1 +1,1 @@
-<div>#parse("copyright.vm")</div>
+<div>#parse("inc/copyright.vm")</div>
