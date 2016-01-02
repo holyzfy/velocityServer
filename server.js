@@ -2,7 +2,6 @@ var config = require('config');
 var express = require('express');
 var finalhandler = require('finalhandler');
 var serveIndex = require('serve-index');
-var async = require('async');
 var debug = require('debug')('velocityServer:index.js');
 var Velocity = require('velocityjs');
 var File = require('vinyl');

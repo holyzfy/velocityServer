@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/holyzfy/velocityServer",
   "dependencies": {
-    "async": "^1.4.2",
     "colors": "^1.1.2",
     "config": "^1.17.1",
     "coveralls": "^2.11.6",
