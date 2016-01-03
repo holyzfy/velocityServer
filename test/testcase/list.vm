@@ -6,6 +6,6 @@
 
 <p>content</p>
 
-<p>#parse("inc/aside.vm")</p>
+#set($aside = 'aside')<p>#parse("inc/aside.vm")</p>
 
 <div>#parse( "inc/footer.vm" )</div>

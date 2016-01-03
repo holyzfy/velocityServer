@@ -1,7 +1,6 @@
 {
     "port": 8021,
     "webapps": "",
-    "ssiMaxDepth": 10,
     "vm": [
         ".vm",
         ".html",

@@ -57,7 +57,7 @@ describe(__filename, function(){
         var vmPath = path.join(__dirname, 'testcase/list.vm');
         var vm = server._debug.getFileContent(vmPath);
         var context = null;
-        var macros = server._debug.getMacros(vmPath, context);
+        var macros = server._debug.getMacros(vmPath);
         var ret = Velocity.render(vm, context, macros);
         
         var contentPath = path.join(__dirname, 'testcase/list_expect.html');
@@ -66,24 +66,11 @@ describe(__filename, function(){
         expect(ret).to.be(content);
     });
 
-    it('getMacros: maxDepth = 1', function() {
-        var vmPath = path.join(__dirname, 'testcase/list.vm');
-        var vm = server._debug.getFileContent(vmPath);
-        var context = null;
-        var macros = server._debug.getMacros(vmPath, context, 1);
-        var ret = Velocity.render(vm, context, macros);
-        
-        var contentPath = path.join(__dirname, 'testcase/list_expect2.html');
-        var content = server._debug.getFileContent(contentPath);
-
-        expect(ret).to.be(content);
-    });
-
     it('getMacros: unparsed', function() {
         var vmPath = path.join(__dirname, 'testcase/unparsed.vm');
         var vm = server._debug.getFileContent(vmPath);
+        var macros = server._debug.getMacros(vmPath);
         var context = null;
-        var macros = server._debug.getMacros(vmPath, context);
         var ret = Velocity.render(vm, context, macros);
         
         var contentPath = path.join(__dirname, 'testcase/unparsed.html');

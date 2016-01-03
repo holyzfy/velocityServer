@@ -1,6 +1,6 @@
 {
   "name": "velocityServer",
-  "version": "0.1.4",
+  "version": "0.2.1",
   "description": "velocity模板引擎",
   "scripts": {
     "test": "mocha test",

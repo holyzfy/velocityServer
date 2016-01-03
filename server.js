@@ -47,7 +47,7 @@ function compile(vmPath, callback) {
     } catch(err) {}
 
     try {
-        var html = Velocity.render(template, context, getMacros(vmFile.path, context));
+        var html = Velocity.render(template, context, getMacros(vmFile.path));
         html = ssiInclude(html, vmFile.path);
         callback(null, html);
     } catch(err) {
@@ -55,9 +55,7 @@ function compile(vmPath, callback) {
     }
 }
 
-function getMacros(relativePath, context, maxDepth) {
-    maxDepth = isNaN(maxDepth) ? config.ssiMaxDepth : maxDepth;
-
+function getMacros(relativePath) {
     var ssi = function(filePath) {
         var newFilePath = path.resolve(path.dirname(relativePath), filePath);
         var content = getFileContent(newFilePath);
@@ -66,9 +64,7 @@ function getMacros(relativePath, context, maxDepth) {
             return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', filePath);
         }
 
-        var hasSSI = content.match(reg.macroParse) || content.match(reg.macroInclude);
-        var macros = (hasSSI && --maxDepth > 0) ? getMacros(relativePath, context, maxDepth) : null;
-        return Velocity.render(content, context, macros);
+        return this.eval(content);
     };
 
     return {
