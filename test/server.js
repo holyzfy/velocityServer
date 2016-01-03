@@ -66,7 +66,7 @@ describe(__filename, function(){
         expect(ret).to.be(content);
     });
 
-    /*it('getMacros: maxDepth = 1', function() {
+    it('getMacros: maxDepth = 1', function() {
         var vmPath = path.join(__dirname, 'testcase/list.vm');
         var vm = server._debug.getFileContent(vmPath);
         var context = null;
@@ -77,7 +77,7 @@ describe(__filename, function(){
         var content = server._debug.getFileContent(contentPath);
 
         expect(ret).to.be(content);
-    });*/
+    });
 
     it('getMacros: unparsed', function() {
         var vmPath = path.join(__dirname, 'testcase/unparsed.vm');
