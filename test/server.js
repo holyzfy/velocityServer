@@ -37,7 +37,7 @@ describe(__filename, function(){
         expect(content).to.be('<h1>${title}</h1>');
     });
 
-    it('ssi include', function() {
+    it('ssiInclude.reg', function() {
         var pattern = server._debug.ssiInclude.reg;
         var vm = '<!--#include virtual="inc/header.vm" -->';
         expect(vm.match(pattern)).to.have.length(1);
@@ -81,7 +81,7 @@ describe(__filename, function(){
         expect(ret).to.be(content);
     });
 
-    it('macro include', function() {
+    it('ssi', function() {
         var vmPath = path.join(__dirname, 'testcase/result.vm');
         var vm = server._debug.getFileContent(vmPath);
         var ret = server._debug.ssiInclude(vm, vmPath);
