@@ -37,24 +37,6 @@ describe(__filename, function(){
         expect(content).to.be('<h1>${title}</h1>');
     });
 
-    it('ssiInclude.reg', function() {
-        var pattern = server._debug.ssiInclude.reg;
-        var vm = '<!--#include virtual="inc/header.vm" -->';
-        expect(vm.match(pattern)).to.have.length(1);
-
-        vm = '<!--#include file="inc/header.vm" -->';
-        expect(vm.match(pattern)).to.have.length(1);
-
-        vm = '<!--#include file="inc/header.vm"-->';
-        expect(vm.match(pattern)).to.have.length(1);
-
-        vm = '<!--\\#include file="inc/header.vm" -->';
-        expect(vm.match(pattern)).to.have.length(1);
-
-        vm = '<!-- #include file="inc/header.vm"-->';
-        expect(vm.match(pattern)).to.be(null);
-    });
-
     it('getMacros', function() {
         var vmPath = path.join(__dirname, 'testcase/list.vm');
         var vm = server._debug.getFileContent(vmPath);
@@ -79,6 +61,24 @@ describe(__filename, function(){
         var content = server._debug.getFileContent(contentPath);
 
         expect(ret).to.be(content);
+    });
+
+    it('ssiInclude.reg', function() {
+        var pattern = server._debug.ssiInclude.reg;
+        var vm = '<!--#include virtual="inc/header.vm" -->';
+        expect(vm.match(pattern)).to.have.length(1);
+
+        vm = '<!--#include file="inc/header.vm" -->';
+        expect(vm.match(pattern)).to.have.length(1);
+
+        vm = '<!--#include file="inc/header.vm"-->';
+        expect(vm.match(pattern)).to.have.length(1);
+
+        vm = '<!--\\#include file="inc/header.vm" -->';
+        expect(vm.match(pattern)).to.have.length(1);
+
+        vm = '<!-- #include file="inc/header.vm"-->';
+        expect(vm.match(pattern)).to.be(null);
     });
 
     it('ssi', function() {
