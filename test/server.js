@@ -37,20 +37,22 @@ describe(__filename, function(){
         expect(content).to.be('<h1>${title}</h1>');
     });
 
-    it('reg:#parse', function() {
-        var vm = '<div>#parse("inc/copyright.vm")</div>';
-        expect(vm.match(server._debug.reg.macroParse).length).to.be(1);
-        expect(vm.match(server._debug.reg.macroParse).length).to.be(1);
-    });
+    it('ssi include', function() {
+        var pattern = server._debug.ssiInclude.reg;
+        var vm = '<!--#include virtual="inc/header.vm" -->';
+        expect(vm.match(pattern)).to.have.length(1);
 
-    it('reg:#include', function() {
-        var vm = '<div>#include( "inc/copyright.vm" )</div>';
-        expect(vm.match(server._debug.reg.macroInclude).length).to.be(1);
-    });
+        vm = '<!--#include file="inc/header.vm" -->';
+        expect(vm.match(pattern)).to.have.length(1);
 
-    it('reg:<!#include', function() {
-        var vm = '<!--#include virtual="inc/header.vm" --><!--#include file="inc/header.vm"-->';
-        expect(vm.match(server._debug.reg.ssiInclude).length).to.be(2);
+        vm = '<!--#include file="inc/header.vm"-->';
+        expect(vm.match(pattern)).to.have.length(1);
+
+        vm = '<!--\\#include file="inc/header.vm" -->';
+        expect(vm.match(pattern)).to.have.length(1);
+
+        vm = '<!-- #include file="inc/header.vm"-->';
+        expect(vm.match(pattern)).to.be(null);
     });
 
     it('getMacros', function() {
@@ -79,7 +81,7 @@ describe(__filename, function(){
         expect(ret).to.be(content);
     });
 
-    it('ssiInclude', function() {
+    it('macro include', function() {
         var vmPath = path.join(__dirname, 'testcase/result.vm');
         var vm = server._debug.getFileContent(vmPath);
         var ret = server._debug.ssiInclude(vm, vmPath);

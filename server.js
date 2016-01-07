@@ -74,17 +74,12 @@ function getMacros(relativePath) {
 }
 
 function ssiInclude(content, relativePath) {
-    return content.replace(reg.ssiInclude, function(match, filePath) {
+    return content.replace(ssiInclude.reg, function(match, filePath) {
         var newFilePath = path.resolve(path.dirname(relativePath), filePath);
         return getFileContent(newFilePath);
     });
 }
-
-var reg = {
-    macroParse: /\#parse\(\s*"([^"]*)"\s*\)/gm,
-    macroInclude: /\#include\(\s*"([^"]*)"\s*\)/gm,
-    ssiInclude: /<\!--\\?#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm
-};
+ssiInclude.reg = /<\!--\\?#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm;
 
 function getFileContent(filePath) {
     var content = null;
@@ -143,7 +138,6 @@ module.exports = {
         parseVm: parseVm,
         compile: compile,
         getMacros: getMacros,
-        reg: reg,
         ssiInclude: ssiInclude,
         getFileContent: getFileContent,
         errorHandler: errorHandler,
