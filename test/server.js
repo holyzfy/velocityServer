@@ -5,7 +5,11 @@ var path = require('path');
 var Velocity = require('velocityjs');
 var server = proxyquire('../server.js', {
     config: {
-        webapps: __dirname
+        webapps: __dirname,
+        proxy: {
+            path: '/api/*',
+            target: 'http://localhost:9999'
+        }
     },
     express: function() {
         return {
@@ -19,6 +23,7 @@ var server = proxyquire('../server.js', {
     finalhandler: sinon.stub().returns(sinon.spy())
 });
 var File = require('vinyl');
+var http = require('http');
 
 describe(__filename, function(){
     it('getExtname', function() {
@@ -138,6 +143,14 @@ describe(__filename, function(){
 
     it('errorHandler', function() {
         expect(server._debug.errorHandler).to.not.throwException();
+    });
+
+    it('myProxy', function() {
+        var req = http.request();
+        req.url = 'path/to/request';
+        var next = sinon.spy();
+        server._debug.myProxy(req, {}, next).emit('error', 'test proxy error');
+        expect(next.called).to.be.ok();
     });
 
     it('json: file is existed', function() {

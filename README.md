@@ -12,10 +12,13 @@ velocity模板服务器
 
 0. 编辑`config/default.json`并另存为`config/local.json`，可用的配置项：
 
-    * `port`: 服务器的运行端口
-    * `webapps`: 服务器根目录，请填写绝对路径
-    * `vm`: velocity文件的扩展名
-    * `responseHeaders`: 响应头
+    - `port` 服务器的运行端口
+    - `webapps` 服务器根目录，请填写绝对路径
+    - `vm` velocity文件的扩展名
+    - `responseHeaders` 响应头
+    - `proxy` http代理
+    - `proxy.path` 需要代理的url，例如`/api/*`
+    - `proxy.target` 代理服务器地址，例如`http://localhost:9999`
 
 ## 使用说明
 

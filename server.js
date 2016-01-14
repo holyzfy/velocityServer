@@ -7,6 +7,7 @@ var Velocity = require('velocityjs');
 var File = require('vinyl');
 var path = require('path');
 var fs = require('fs');
+var httpProxy = require('http-proxy');
 
 function getExtname(filePath) {
     return (new File({path: filePath})).extname;
@@ -111,6 +112,15 @@ function json(req, res, next) {
     }
 };
 
+function myProxy(req, res, next) {
+    var proxy = httpProxy.createProxyServer({});
+    proxy.web(req, res, {target: config.proxy.target});
+    proxy.on('error', function(err) {
+        next('Unable to Connect to Proxy Server.' + err.message);
+    });
+    return proxy;
+}
+
 function start(callback) {
     if(!config.webapps) {
         return callback(new Error('Error: config.webapps is missing, Please set it in config/local.json file.'));
@@ -124,6 +134,7 @@ function start(callback) {
         next();
     });
     app.use(parseVm);
+    config.proxy && config.proxy.path && app.use(config.proxy.path, myProxy);
     app.post('*.json', json);
     app.use(serveIndex(config.webapps, {icons: true}));
     app.use(express.static(config.webapps, {index: false, maxAge: 0}));
@@ -141,7 +152,8 @@ module.exports = {
         ssiInclude: ssiInclude,
         getFileContent: getFileContent,
         errorHandler: errorHandler,
-        json: json
+        json: json,
+        myProxy: myProxy
     },
     start: start
 }
