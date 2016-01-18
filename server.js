@@ -113,7 +113,8 @@ function json(req, res, next) {
 };
 
 function myProxy(req, res, next) {
-    var proxy = httpProxy.createProxyServer({});
+    var proxy = httpProxy.createProxyServer();
+    req.url = req.originalUrl;
     proxy.web(req, res, {target: config.proxy.target});
     proxy.on('error', function(err) {
         next('Unable to Connect to Proxy Server.' + err.message);
@@ -128,13 +129,13 @@ function start(callback) {
 
     var app = express();
     
+    config.proxy && config.proxy.path && app.use(config.proxy.path, myProxy);
     app.set('views', config.webapps);
     app.use(function(req, res, next) {
         res.set(config.responseHeaders);
         next();
     });
     app.use(parseVm);
-    config.proxy && config.proxy.path && app.use(config.proxy.path, myProxy);
     app.post('*.json', json);
     app.use(serveIndex(config.webapps, {icons: true}));
     app.use(express.static(config.webapps, {index: false, maxAge: 0}));

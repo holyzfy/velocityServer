@@ -148,6 +148,7 @@ describe(__filename, function(){
     it('myProxy', function() {
         var req = http.request();
         req.url = 'path/to/request';
+        req.originalUrl = 'path/to/request';
         var next = sinon.spy();
         server._debug.myProxy(req, {}, next).emit('error', 'test proxy error');
         expect(next.called).to.be.ok();
