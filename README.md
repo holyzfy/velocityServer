@@ -10,15 +10,40 @@ velocity模板服务器
 
 0. 运行`npm install`
 
-0. 编辑`config/default.json`并另存为`config/local.json`，可用的配置项：
+0. 编辑`config/default.json`并另存为`config/local.json`，配置项示例：
 
-    - `port` 服务器的运行端口
-    - `webapps` 服务器根目录，请填写绝对路径
-    - `vm` velocity文件的扩展名
-    - `responseHeaders` 响应头
-    - `proxy` http代理
-    - `proxy.path` 需要代理的url，例如`/api/*`
-    - `proxy.target` 代理服务器地址，例如`http://localhost:9999`
+```js
+{
+    // 服务器的运行端口
+    "port": 8021,
+
+    // 服务器根目录，请填写绝对路径
+    "webapps": "",
+
+    // velocity文件的扩展名
+    "vm": [
+        ".vm",
+        ".html",
+        ".shtml"
+    ],
+
+    // 响应头
+    "responseHeaders": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
+    },
+    
+    // http代理
+    "proxy": {
+        // 需要代理的url
+        "path": "/api/*",
+
+        // 代理服务器地址
+        "target": "http://localhost:9999"
+    }
+}
+```
 
 ## 使用说明
 
