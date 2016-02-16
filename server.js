@@ -115,7 +115,10 @@ function json(req, res, next) {
 function myProxy(req, res, next) {
     var proxy = httpProxy.createProxyServer();
     req.url = req.originalUrl;
-    proxy.web(req, res, {target: config.proxy.target});
+    proxy.web(req, res, {
+        target: config.proxy.target,
+        changeOrigin: true
+    });
     proxy.on('error', function(err) {
         next('Unable to Connect to Proxy Server.' + err.message);
     });
