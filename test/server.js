@@ -68,6 +68,12 @@ describe(__filename, function(){
         expect(ret).to.be(content);
     });
 
+    it('getMacros: module not found', function() {
+        var vmPath = 'module/not/existed';
+        var content = server._debug.getMacros('/').include(vmPath);
+        expect(content).to.be('<!-- ERROR: module/not/existed not found -->');
+    });
+
     it('ssiInclude.reg', function() {
         var pattern = server._debug.ssiInclude.reg;
         var vm = '<!--#include virtual="inc/header.vm" -->';

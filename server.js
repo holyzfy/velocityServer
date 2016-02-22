@@ -40,7 +40,6 @@ function compile(vmPath, callback) {
         return callback('File not found:' + vmPath);
     }
     vmFile.contents = new Buffer(template);
-
     var context;
     try {
         delete require.cache[require.resolve(contextFile.path)];
@@ -60,7 +59,6 @@ function getMacros(relativePath) {
     var ssi = function(filePath) {
         var newFilePath = path.resolve(path.dirname(relativePath), filePath);
         var content = getFileContent(newFilePath);
-
         if(null === content) {
             return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', filePath);
         }
@@ -77,7 +75,7 @@ function getMacros(relativePath) {
 function ssiInclude(content, relativePath) {
     return content.replace(ssiInclude.reg, function(match, filePath) {
         var newFilePath = path.resolve(path.dirname(relativePath), filePath);
-        return getFileContent(newFilePath);
+        return getFileContent(newFilePath) || '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', filePath);
     });
 }
 ssiInclude.reg = /<\!--\\?#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm;
