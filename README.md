@@ -8,7 +8,7 @@ velocity模板服务器
 
 ## 安装
 
-0. 运行`npm install`
+0. 在velocityServer目录下运行`npm install`
 
 0. 编辑`config/default.json`并另存为`config/local.json`，配置项示例：
 
@@ -17,7 +17,7 @@ velocity模板服务器
     // 服务器的运行端口
     "port": 8021,
 
-    // 服务器根目录，请填写绝对路径
+    // 服务器根目录，用来存放一个一个的项目，请填写绝对路径
     "webapps": "",
 
     // velocity文件的扩展名
