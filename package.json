@@ -1,6 +1,6 @@
 {
   "name": "velocityServer",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "velocity模板引擎",
   "scripts": {
     "test": "mocha test",
@@ -22,18 +22,18 @@
   "homepage": "https://github.com/holyzfy/velocityServer",
   "dependencies": {
     "colors": "^1.1.2",
-    "config": "^1.19.0",
-    "coveralls": "^2.11.8",
+    "config": "^1.20.1",
+    "coveralls": "^2.11.9",
     "debug": "^2.2.0",
     "expect.js": "^0.3.1",
     "express": "^4.13.4",
     "finalhandler": "^0.4.1",
     "http-proxy": "^1.13.2",
-    "nyc": "^6.0.0",
-    "proxyquire": "^1.7.4",
+    "nyc": "^6.4.2",
+    "proxyquire": "^1.7.7",
     "serve-index": "^1.7.3",
-    "sinon": "^1.17.3",
-    "velocityjs": "^0.7.5",
+    "sinon": "^1.17.4",
+    "velocityjs": "^0.8.0",
     "vinyl": "^1.1.1"
   }
 }
