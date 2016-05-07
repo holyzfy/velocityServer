@@ -2,12 +2,13 @@ var config = require('config');
 var express = require('express');
 var finalhandler = require('finalhandler');
 var serveIndex = require('serve-index');
-var debug = require('debug')('velocityServer:index.js');
+var debug = require('debug')('velocityServer:server.js');
 var Velocity = require('velocityjs');
 var File = require('vinyl');
 var path = require('path');
 var fs = require('fs');
 var httpProxy = require('http-proxy');
+var JSON5 = require('json5');
 
 function getExtname(filePath) {
     return (new File({path: filePath})).extname;
@@ -102,6 +103,12 @@ function json(req, res, next) {
     if(null === content) {
         next();
     } else {
+        try {
+            content = JSON.stringify(JSON5.parse(content));
+        } catch (err) {
+            return next(err);
+        }
+
         res.set({
             'Content-Type': 'application/json',
             'maxAge': 0
@@ -137,7 +144,7 @@ function start(callback) {
         next();
     });
     app.use(parseVm);
-    app.post('*.json', json);
+    app.all('*.json5?', json);
     app.use(serveIndex(config.webapps, {icons: true}));
     app.use(express.static(config.webapps, {index: false, maxAge: 0}));
     app.use(errorHandler);

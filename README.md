@@ -1,10 +1,16 @@
 # velocityServer
 
-velocity模板服务器
-
 [![Build Status](https://travis-ci.org/holyzfy/velocityServer.svg)](https://travis-ci.org/holyzfy/velocityServer)
 [![Dependency Status](https://david-dm.org/holyzfy/velocityServer.svg)](https://david-dm.org/holyzfy/velocityServer)
 [![Coverage Status](https://coveralls.io/repos/holyzfy/velocityServer/badge.svg?branch=master&service=github)](https://coveralls.io/github/holyzfy/velocityServer?branch=master)
+
+velocity模板服务器
+
+## 功能
+
+ - 模板渲染
+ - 静态服务
+ - `.json`、`.json5`文件支持[json5](https://github.com/json5/json5)语法，响应内容为json格式
 
 ## 安装
 

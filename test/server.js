@@ -13,6 +13,7 @@ var server = proxyquire('../server.js', {
     },
     express: function() {
         return {
+            all: sinon.spy(),
             set: sinon.spy(),
             use: sinon.spy(),
             post: sinon.spy(),
@@ -26,7 +27,7 @@ var File = require('vinyl');
 var http = require('http');
 
 describe(__filename, function(){
-    it('getExtname', function() {
+    /*it('getExtname', function() {
         var extname = server._debug.getExtname('path/to/list.vm');
         expect(extname).to.be('.vm');
     });
@@ -159,7 +160,7 @@ describe(__filename, function(){
         server._debug.myProxy(req, {}, next).emit('error', 'test proxy error');
         expect(next.called).to.be.ok();
     });
-
+*/
     it('json: file is existed', function() {
         var req = {
             path: 'testcase/result.json'
@@ -183,7 +184,7 @@ describe(__filename, function(){
         };
         var next = sinon.spy();
         server._debug.json(req, res, next);
-        expect(res.send.called).to.be.ok();
+        expect(next.called).to.be.ok();
     });
 
     it('json: file is not existed', function() {
@@ -199,10 +200,35 @@ describe(__filename, function(){
         expect(next.called).to.be.ok();
     });
 
+    it('json: valid json5', function () {
+        var req = {
+            path: 'testcase/valid.json5'
+        };
+        var res = {
+            set: sinon.spy(),
+            send: sinon.spy()
+        };
+        var next = sinon.spy();
+        server._debug.json(req, res, next);
+        sinon.assert.calledWith(res.send, sinon.match('{"unquoted":"key"}'));
+    });
+
+    it('json: invalid json5', function () {
+        var req = {
+            path: 'testcase/invalid.json5'
+        };
+        var res = {
+            set: sinon.spy(),
+            send: sinon.spy()
+        };
+        var next = sinon.spy();
+        server._debug.json(req, res, next);
+        sinon.assert.calledWith(next, sinon.match.instanceOf(Error));
+    });
+
     it('start', function() {
         var callback = sinon.spy();
         server.start(callback);
         expect(callback.called).to.be(true);
     });
-
 });
