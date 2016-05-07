@@ -27,7 +27,7 @@ var File = require('vinyl');
 var http = require('http');
 
 describe(__filename, function(){
-    /*it('getExtname', function() {
+    it('getExtname', function() {
         var extname = server._debug.getExtname('path/to/list.vm');
         expect(extname).to.be('.vm');
     });
@@ -160,7 +160,7 @@ describe(__filename, function(){
         server._debug.myProxy(req, {}, next).emit('error', 'test proxy error');
         expect(next.called).to.be.ok();
     });
-*/
+
     it('json: file is existed', function() {
         var req = {
             path: 'testcase/result.json'
