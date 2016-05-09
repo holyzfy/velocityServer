@@ -16,7 +16,6 @@ function getExtname(filePath) {
 
 function parseVm(req, res, next) {
     var isVm = config.vm.indexOf(getExtname(req.path)) >= 0;
-    // debug(req.path, 'isVm=', isVm);
     if(!isVm) {
         return next();
     }
@@ -104,7 +103,7 @@ function json(req, res, next) {
         next();
     } else {
         try {
-            content = JSON.stringify(JSON5.parse(content));
+            content = JSON.stringify(JSON5.parse(content), null, 4);
         } catch (err) {
             return next(err);
         }

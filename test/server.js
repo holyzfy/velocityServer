@@ -2,6 +2,7 @@ var expect = require('expect.js');
 var proxyquire = require('proxyquire');
 var sinon = require('sinon');
 var path = require('path');
+var fs = require('fs');
 var Velocity = require('velocityjs');
 var server = proxyquire('../server.js', {
     config: {
@@ -210,7 +211,13 @@ describe(__filename, function(){
         };
         var next = sinon.spy();
         server._debug.json(req, res, next);
-        sinon.assert.calledWith(res.send, sinon.match('{"unquoted":"key"}'));
+
+        var expect = null;
+        try {
+            expect = fs.readFileSync(path.join(__dirname, 'testcase/valid.json'), 'utf8');
+        } catch(err) {}
+        
+        sinon.assert.calledWith(res.send, sinon.match(expect));
     });
 
     it('json: invalid json5', function () {
