@@ -87,6 +87,10 @@ module.exports = {
 
     node index.js
 
+推荐使用[pm2](https://www.npmjs.com/package/pm2)来启动velocityServer：
+
+    pm2 start index.js --name velocityServer
+
 ## 测试
 
     npm test
