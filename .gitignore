@@ -32,3 +32,6 @@ node_modules
 local.json
 test.js
 nohup.out
+
+.DS_Store
+Thumbs.db
