@@ -34,7 +34,7 @@
     "proxyquire": "^1.7.10",
     "serve-index": "^1.8.0",
     "sinon": "^1.17.5",
-    "velocityjs": "^0.8.5",
+    "velocityjs": "^0.9.0",
     "vinyl": "^1.1.1"
   }
 }
