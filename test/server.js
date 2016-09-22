@@ -21,8 +21,7 @@ var server = proxyquire('../server.js', {
             listen: sinon.stub().callsArg(1),
             static: sinon.spy()
         }
-    },
-    finalhandler: sinon.stub().returns(sinon.spy())
+    }
 });
 var File = require('vinyl');
 var http = require('http');
@@ -118,7 +117,7 @@ describe(__filename, function(){
     it('compile: file not found', function(done) {
         var vmPath = '/path/to/not/existed';
         server._debug.compile(vmPath, function(err) {
-            expect(err).to.be('File not found:' + vmPath);
+            expect(err.status).to.be(404);
             done();
         });
     });
@@ -147,10 +146,6 @@ describe(__filename, function(){
         var next = sinon.spy();
         server._debug.parseVm(req, res, next);
         expect(next.called).to.not.be.ok();
-    });
-
-    it('errorHandler', function() {
-        expect(server._debug.errorHandler).to.not.throwException();
     });
 
     it('myProxy', function() {

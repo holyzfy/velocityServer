@@ -1,6 +1,5 @@
 var config = require('config');
 var express = require('express');
-var finalhandler = require('finalhandler');
 var serveIndex = require('serve-index');
 var debug = require('debug')('velocityServer:server.js');
 var Velocity = require('velocityjs');
@@ -37,7 +36,9 @@ function compile(vmPath, callback) {
 
     var template = getFileContent(vmPath);
     if(null === template) {
-        return callback('File not found:' + vmPath);
+        var err = new Error('File not found:' + vmPath);
+        err.status = 404;
+        return callback(err);
     }
     vmFile.contents = new Buffer(template);
     var context;
@@ -87,13 +88,6 @@ function getFileContent(filePath) {
     } catch(e) {}
     return content;
 }
-
-function errorHandler(err, req, res, next) {
-    var options = {
-        message: true
-    };
-    finalhandler(req, res, options)(err);
-};
 
 function json(req, res, next) {
     var filePath = path.join(config.webapps, req.path);
@@ -146,7 +140,9 @@ function start(callback) {
     app.all('*.json5?', json);
     app.use(serveIndex(config.webapps, {icons: true}));
     app.use(express.static(config.webapps, {index: false, maxAge: 0}));
-    app.use(errorHandler);
+    app.use(function errorHandler(err, req, res, next) {
+        res.status(err.status || 500).send(err.message);
+    });
 
     app.listen(config.port, callback);
 }
@@ -159,7 +155,6 @@ module.exports = {
         getMacros: getMacros,
         ssiInclude: ssiInclude,
         getFileContent: getFileContent,
-        errorHandler: errorHandler,
         json: json,
         myProxy: myProxy
     },
