@@ -76,7 +76,12 @@ function getMacros(relativePath) {
 function ssiInclude(content, relativePath) {
     return content.replace(ssiInclude.reg, function(match, filePath) {
         var newFilePath = path.resolve(path.dirname(relativePath), filePath);
-        return getFileContent(newFilePath) || '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', filePath);
+        var content = getFileContent(newFilePath);
+        if(content === null) {
+            return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', filePath);
+        } else {
+            return content;
+        }     
     });
 }
 ssiInclude.reg = /<\!--\\?#include\s+(?:virtual|file)="([^"]*)"\s*-->/gm;
