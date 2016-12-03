@@ -1,4 +1,4 @@
-var expect = require('expect.js');
+var tape = require('tape');
 var proxyquire = require('proxyquire');
 var sinon = require('sinon');
 var server = proxyquire('../server.js', {
@@ -7,10 +7,9 @@ var server = proxyquire('../server.js', {
     }
 });
 
-describe(__filename, function() {
-    it('start', function() {
-        var callback = sinon.stub();
-        server.start(callback);
-        expect(callback.calledWith(sinon.match.instanceOf(Error))).to.be(true)
-    });
-})
+tape('start', function(test) {
+    var callback = sinon.stub();
+    server.start(callback);
+    test.ok(callback.calledWith(sinon.match.instanceOf(Error)));
+    test.end();
+});

@@ -1,9 +1,9 @@
 {
   "name": "velocityServer",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "velocity server",
   "scripts": {
-    "test": "mocha test",
+    "test": "./node_modules/.bin/tape 'test/**/*.js' | ./node_modules/.bin/tap-spec",
     "coverage": "rm -r coverage ; nyc --reporter=html npm test && nyc report",
     "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
@@ -25,7 +25,6 @@
     "config": "^1.21.0",
     "coveralls": "^2.11.12",
     "debug": "^2.2.0",
-    "expect.js": "^0.3.1",
     "express": "^4.14.0",
     "http-proxy": "^1.14.0",
     "json5": "^0.5.0",
@@ -33,6 +32,8 @@
     "proxyquire": "^1.7.10",
     "serve-index": "^1.8.0",
     "sinon": "^1.17.5",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.3",
     "velocityjs": "^0.9.0",
     "vinyl": "^2.0.0"
   }

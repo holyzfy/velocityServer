@@ -8,8 +8,8 @@ velocity模板服务器
 
 ## 功能
 
- - 模板渲染
- - 静态服务
+ - velocity模板渲染
+ - 静态资源服务
  - `.json`、`.json5`文件支持[json5](https://github.com/json5/json5)语法，响应内容为json格式
 
 ## 安装
@@ -23,7 +23,7 @@ velocity模板服务器
     // 服务器的运行端口
     "port": 8021,
 
-    // 服务器根目录，用来存放一个一个的项目，请填写绝对路径
+    // 服务器根目录，请填写绝对路径
     "webapps": "",
 
     // velocity文件的扩展名
