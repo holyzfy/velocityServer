@@ -29,7 +29,7 @@ var http = require('http');
 
 tape('getExtname', function(test) {
     var extname = server._debug.getExtname('path/to/list.vm');
-    test.ok(extname === '.vm');
+    test.equal(extname, '.vm');
     test.end();
 });
 
@@ -42,7 +42,7 @@ tape('getFileContent: file is not existed', function(test) {
 tape('getFileContent: file is existed', function(test) {
     var vmPath = path.join(__dirname, 'testcase/hello.vm');        
     var content = server._debug.getFileContent(vmPath);
-    test.ok(content === '<h1>${title}</h1>');
+    test.equal(content, '<h1>${title}</h1>');
     test.end();
 });
 
@@ -56,7 +56,7 @@ tape('getMacros', function(test) {
     var contentPath = path.join(__dirname, 'testcase/list_expect.html');
     var content = server._debug.getFileContent(contentPath);
 
-    test.ok(ret === content);
+    test.equal(ret, content);
     test.end();
 });
 
@@ -70,33 +70,33 @@ tape('getMacros: unparsed', function(test) {
     var contentPath = path.join(__dirname, 'testcase/unparsed.html');
     var content = server._debug.getFileContent(contentPath);
 
-    test.ok(ret === content);
+    test.equal(ret, content);
     test.end();
 });
 
 tape('getMacros: module not found', function(test) {
     var vmPath = 'module/not/existed';
     var content = server._debug.getMacros('/').include(vmPath);
-    test.ok(content === '<!-- ERROR: module/not/existed not found -->');
+    test.equal(content, '<!-- ERROR: module/not/existed not found -->');
     test.end();
 });
 
 tape('ssiInclude.reg', function(test) {
     var pattern = server._debug.ssiInclude.reg;
     var vm = '<!--#include virtual="inc/header.vm" -->';
-    test.ok(vm.match(pattern).length === 1);
+    test.equal(vm.match(pattern).length, 1);
 
     vm = '<!--#include file="inc/header.vm" -->';
-    test.ok(vm.match(pattern).length === 1);
+    test.equal(vm.match(pattern).length, 1);
 
     vm = '<!--#include file="inc/header.vm"-->';
-    test.ok(vm.match(pattern).length === 1);
+    test.equal(vm.match(pattern).length, 1);
 
     vm = '<!--\\#include file="inc/header.vm" -->';
-    test.ok(vm.match(pattern).length === 1);
+    test.equal(vm.match(pattern).length, 1);
 
     vm = '<!-- #include file="inc/header.vm"-->';
-    test.ok(vm.match(pattern) === null);
+    test.equal(vm.match(pattern), null);
 
     test.end();
 });
@@ -109,7 +109,7 @@ tape('ssi', function(test) {
     var contentPath = path.join(__dirname, 'testcase/result_expect.html');
     var content = server._debug.getFileContent(contentPath);
 
-    test.ok(ret === content);
+    test.equal(ret, content);
     test.end();
 });
 
@@ -118,7 +118,7 @@ tape('compile', function(test) {
     var contentPath = path.join(__dirname, 'testcase/index_expect.html');
     var content = server._debug.getFileContent(contentPath);
     server._debug.compile(vmPath, function(err, ret) {
-        test.ok(ret === content);
+        test.equal(ret, content);
         test.end();
     });
 });
@@ -126,7 +126,7 @@ tape('compile', function(test) {
 tape('compile: file not found', function(test) {
     var vmPath = '/path/to/not/existed';
     server._debug.compile(vmPath, function(err) {
-        test.ok(err.status === 404);
+        test.equal(err.status, 404);
         test.end();
     });
 });
