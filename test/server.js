@@ -6,11 +6,7 @@ var fs = require('fs');
 var Velocity = require('velocityjs');
 var server = proxyquire('../server.js', {
     config: {
-        webapps: __dirname,
-        proxy: {
-            path: '/api/*',
-            target: 'http://localhost:9999'
-        }
+        webapps: __dirname
     },
     express: function() {
         return {
@@ -25,7 +21,6 @@ var server = proxyquire('../server.js', {
 });
 var File = require('vinyl');
 var http = require('http');
-
 
 tape('getExtname', function(test) {
     var extname = server._debug.getExtname('path/to/list.vm');
@@ -156,16 +151,6 @@ tape('parseVm: this is a vm file', function(test) {
     var next = sinon.spy();
     server._debug.parseVm(req, res, next);
     test.notOk(next.called);
-    test.end();
-});
-
-tape('myProxy', function(test) {
-    var req = http.request();
-    req.url = 'path/to/request';
-    req.originalUrl = 'path/to/request';
-    var next = sinon.spy();
-    server._debug.myProxy(req, {}, next).emit('error', 'test proxy error');
-    test.ok(next.called);
     test.end();
 });
 

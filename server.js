@@ -6,7 +6,6 @@ var Velocity = require('velocityjs');
 var File = require('vinyl');
 var path = require('path');
 var fs = require('fs');
-var httpProxy = require('http-proxy');
 var JSON5 = require('json5');
 
 function getExtname(filePath) {
@@ -79,6 +78,8 @@ function ssiInclude(content, relativePath) {
         var content = getFileContent(newFilePath);
         if(content === null) {
             return '<!-- ERROR: {{module}} not found -->'.replace('{{module}}', filePath);
+        } else if(ssiInclude.reg.test(content)) {
+            return ssiInclude(content, newFilePath);
         } else {
             return content;
         }     
@@ -115,19 +116,6 @@ function json(req, res, next) {
     }
 };
 
-function myProxy(req, res, next) {
-    var proxy = httpProxy.createProxyServer();
-    req.url = req.originalUrl;
-    proxy.web(req, res, {
-        target: config.proxy.target,
-        changeOrigin: true
-    });
-    proxy.on('error', function(err) {
-        next('Unable to Connect to Proxy Server.' + err.message);
-    });
-    return proxy;
-}
-
 function start(callback) {
     if(!config.webapps) {
         return callback(new Error('Error: config.webapps is missing, Please set it in config/local.json file.'));
@@ -135,7 +123,6 @@ function start(callback) {
 
     var app = express();
     
-    config.proxy && config.proxy.path && app.use(config.proxy.path, myProxy);
     app.set('views', config.webapps);
     app.use(function(req, res, next) {
         res.set(config.responseHeaders);
@@ -160,8 +147,7 @@ module.exports = {
         getMacros: getMacros,
         ssiInclude: ssiInclude,
         getFileContent: getFileContent,
-        json: json,
-        myProxy: myProxy
+        json: json
     },
     start: start
 }

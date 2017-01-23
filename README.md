@@ -38,15 +38,6 @@ velocity模板服务器
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
         "Expires": "0"
-    },
-    
-    // http代理
-    "proxy": {
-        // 需要代理的url
-        "path": "/api/*",
-
-        // 代理服务器地址
-        "target": "http://localhost:9999"
     }
 }
 ```
