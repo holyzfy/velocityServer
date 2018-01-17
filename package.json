@@ -33,7 +33,7 @@
     "sinon": "~1.17.7",
     "tap-spec": "~4.1.1",
     "tape": "~4.6.3",
-    "velocityjs": "~0.9.4",
+    "velocityjs": "~0.10.0",
     "vinyl": "~2.0.1"
   }
 }
