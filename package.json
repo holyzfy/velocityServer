@@ -30,7 +30,7 @@
     "nyc": "~11.4.1",
     "proxyquire": "~1.8.0",
     "serve-index": "~1.9.1",
-    "sinon": "~4.2.0",
+    "sinon": "~4.3.0",
     "tap-spec": "~4.1.1",
     "tape": "~4.8.0",
     "velocityjs": "~1.0.0",
